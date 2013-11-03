@@ -13,34 +13,34 @@
 	<link href="css/lightbox.css" rel="stylesheet" />
 
 	<?php
-	
+
 	include 'config.php';
 	echo "<title>$title</title>";
-	
+
 	?>
-	
+
 	</head>
 	<body>
-	
-	<script type="text/javascript">
-	$(function() {
-		$('a[@rel*=lightbox]').lightBox();
-	});
-	</script>
-	
+
 	<?php
-	
+
 	include 'config.php';
-	
+
 	echo "<div id='content'><h1>$title</h1>";
-	
+
+	$month = $_GET['month'];
+	if (empty($month))
+		goto notable;
+
 	$db = new PDO('sqlite:pygmyfoto.sqlite');
-	
+
 	echo "<div class='center'>$navigation</div>";
-	
+
+	$result = $db->query("SELECT id, title, description, tags, exif, osm, original FROM photos WHERE published = '0' and dt like '$month%' ORDER BY dt DESC");
+	if (empty($result))
+		goto notable;
+
 	echo "<table border=0>";
-	$result = $db->query("SELECT id, title, description, tags, exif, osm, original FROM photos WHERE published = '0' ORDER BY dt DESC");
-	
 	foreach($result as $row)
 	{
 	echo "<tr><td><h2><a class='title' href='photo.php?id=".$row['id']."'>".$row['title']."</h2></a></td></tr>";
@@ -48,24 +48,26 @@
 	echo "<tr><td valign='top'><p class='box'><img src='images/tag.png' alt='Tags' title='Tags'><em> ".$row['tags']."</em> <a href='photo.php?id=".$row['id']."'><img src='images/photography.png' alt='Permalink'title='Permalink'></a> <a href='".$row['original']."'><img src='images/graphic-design.png' alt='Original' title='Original'></a> <a href='".$row['osm']."'><img src='images/world.png' alt='OpenStreetMap' title='Show on OpenStreetMap'></a> <a href='publish.php?id=".$row['id']."'><img src='images/edit.png' alt='Publish' title='Publish'></a></p></td></tr>";
 	echo "<tr><td><p class='box'>".$row['exif']."</p></td></tr>";
 	}
-	
+
 	echo "</table>";
-	
+
+notable:
+
 	$db = NULL;
 
 	echo "<p><center><form method='post' action='search.php'><input type='text' name='tag' size='11'> <input type='submit' value='&#10148;'></form></center></p>";
 
 	echo "<div class='footer'>$footer</div>";
-	
+
 	$ip=$_SERVER['REMOTE_ADDR'];
 	$date = $date = date('Y-m-d H:i:s');
 	$page = basename($_SERVER['PHP_SELF']);
 	$file = fopen("ip.log", "a+");
 	fputs($file, " $ip	$page $date \n");
 	fclose($file);
-	
+
 	?>
-	
+
 	</div>
 	</body>
 </html>

@@ -2,9 +2,7 @@
 
 $title = 'Pygmyfoto';
 
-$navigation="<a href='index.php'>Home</a> &#10034; <a href='randomphoto.php'>Random photo</a> &#10034; <a href='photocrumbs.php'>Photocrumbs</a> &#10034; <a href='archive.php'>Archive</a> &#10034; <a href='stats.php'>Stats</a> &#10034; <a href='https://github.com/dmpop/pygmyfoto'>Pygmyfoto</a>";
-
-$photocrumbs_dir='photos/photocrumbs/'; // Path to the photocrumbs directory. Remember the trailing slash.
+$navigation="<a href='index.php'>Home</a> &#10034; <a href='randomphoto.php'>Random photo</a> &#10034; <a href='archive.php'>Archive</a> &#10034; <a href='stats.php'>Stats</a> &#10034; <a href='https://github.com/dmpop/pygmyfoto'>Pygmyfoto</a>";
 
 $footer='Powered by Pygmyfoto. <a href="rss.php">RSS feed</a>';
 

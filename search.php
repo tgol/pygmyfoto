@@ -58,9 +58,9 @@
 	echo "</table>";
 	
 	$db = NULL;
-	
-	echo "<p><center><form method='post' action='search.php'><input type='text' name='tag' size='11' value='Search by tag'> <input type='submit' value='&#10148;'></form></center></p>";
-	
+
+	echo "<p><center><form method='post' action='search.php'><input type='text' name='tag' size='11'> <input type='submit' value='&#10148;'></form></center></p>";
+
 	echo "<div class='footer'>$footer</div>";
 	
 	$ip=$_SERVER['REMOTE_ADDR'];

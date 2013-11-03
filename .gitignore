@@ -1,1 +1,5 @@
 .directory
+*.JPG
+*.JPG_
+*.sqlite
+ip.log

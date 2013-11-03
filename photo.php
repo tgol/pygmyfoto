@@ -57,13 +57,9 @@
 	$db->query("UPDATE photos SET count = count + 1 WHERE id='$id'");
 	
 	$db = NULL;
-	
-	$rater_id=$row['id'];
-	$rater_item_name='this photo';
-	include("rater.php");
-	
-	echo "<p><center><form method='post' action='search.php'><input type='text' name='tag' size='11' value='Search by tag'> <input type='submit' value='&#10148;'></form></center></p>";
-	
+
+	echo "<p><center><form method='post' action='search.php'><input type='text' name='tag' size='11'> <input type='submit' value='&#10148;'></form></center></p>";
+
 	echo "<div class='footer'>$footer</div>";
 	
 	$ip=$_SERVER['REMOTE_ADDR'];
