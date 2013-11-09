@@ -28,13 +28,13 @@
 
 	echo "<div id='content'><h1>$title</h1>";
 
+	echo "<div class='center'>$navigation</div>";
+
 	$month = $_GET['month'];
 	if (empty($month))
 		goto notable;
 
 	$db = new PDO('sqlite:pygmyfoto.sqlite');
-
-	echo "<div class='center'>$navigation</div>";
 
 	$result = $db->query("SELECT id, title, description, tags, exif, osm, original FROM photos WHERE published = '0' and dt like '$month%' ORDER BY dt DESC");
 	if (empty($result))

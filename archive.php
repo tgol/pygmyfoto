@@ -37,9 +37,6 @@
 	$db = new PDO('sqlite:pygmyfoto.sqlite');
 	
 	echo "<div class='center'>$navigation</div>";
-	echo "<br>";
-
-	echo "<table class='arch'>";
 	$result = $db->query("SELECT id, title, description, tags, exif, dt, osm, original FROM photos WHERE published = '0' ORDER BY dt DESC");
 	$new_month="00";
 	$new_year="0000";
@@ -68,6 +65,9 @@
 
 	if ($ncol < 1)
 		goto notable;
+
+	echo "<br>";
+	echo "<table class='arch'>";
 
 	for ($i=0; $i<13; $i++) { /* year + 12 months */
 		echo "<tr>";
