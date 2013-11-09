@@ -37,20 +37,106 @@
 	$db = new PDO('sqlite:pygmyfoto.sqlite');
 	
 	echo "<div class='center'>$navigation</div>";
-	
-	echo "<table border=0>";
-	$result = $db->query("SELECT id, title, description, tags, exif, osm, original FROM photos WHERE published = '0' ORDER BY dt DESC");
-	
-	foreach($result as $row)
-	{
-	echo "<tr><td><h2><a class='title' href='photo.php?id=".$row['id']."'>".$row['title']."</h2></a></td></tr>";
-	echo "<tr><td><p>".$row['description']."</p></td></tr>";
-	echo "<tr><td valign='top'><p class='box'><img src='images/tag.png' alt='Tags' title='Tags'><em> ".$row['tags']."</em> <a href='photo.php?id=".$row['id']."'><img src='images/photography.png' alt='Permalink'title='Permalink'></a> <a href='".$row['original']."'><img src='images/graphic-design.png' alt='Original' title='Original'></a> <a href='".$row['osm']."'><img src='images/world.png' alt='OpenStreetMap' title='Show on OpenStreetMap'></a> <a href='publish.php?id=".$row['id']."'><img src='images/edit.png' alt='Publish' title='Publish'></a></p></td></tr>";
-	echo "<tr><td><p class='box'>".$row['exif']."</p></td></tr>";
+	echo "<br>";
+
+	echo "<table class='arch'>";
+	$result = $db->query("SELECT id, title, description, tags, exif, dt, osm, original FROM photos WHERE published = '0' ORDER BY dt DESC");
+	$new_month="00";
+	$new_year="0000";
+	$ncol=0;
+	foreach($result as $row) {
+
+		$month=substr($row['dt'], 5, 2);
+		$year=substr($row['dt'], 0, 4);
+		$is_ny=0;
+
+		if ($year != $new_year) {
+			$ncol++;
+			$arr[0][$ncol]=$year;
+			$is_ny=1;
+		}
+		else
+			$is_ny=0;
+
+		if ($month != $new_month or $is_ny == 1) {
+			$nrow=(13-$month);
+			$arr[$nrow][$ncol]="X";
+		}
+		$new_month=$month;
+		$new_year=$year;
+	}
+
+	if ($ncol < 1)
+		goto notable;
+
+	for ($i=0; $i<13; $i++) { /* year + 12 months */
+		echo "<tr>";
+		for ($j=0; $j<=$ncol; $j++) {
+			if ($i == 0)
+				echo "<th class='arch'><a class='title'>".$arr[0][$j]."</a></th>";
+			else {
+				$ii=(13-$i);
+				if ($j==0) {
+					switch ($ii) {
+						case 1:
+							$arr[$i][$j]="January";
+							break;
+						case 2:
+							$arr[$i][$j]="February";
+							break;
+						case 3:
+							$arr[$i][$j]="March";
+							break;
+						case 4:
+							$arr[$i][$j]="April";
+							break;
+						case 5:
+							$arr[$i][$j]="May";
+							break;
+						case 6:
+							$arr[$i][$j]="June";
+							break;
+						case 7:
+							$arr[$i][$j]="July";
+							break;
+						case 8:
+							$arr[$i][$j]="August";
+							break;
+						case 9:
+							$arr[$i][$j]="September";
+							break;
+						case 10:
+							$arr[$i][$j]="October";
+							break;
+						case 11:
+							$arr[$i][$j]="November";
+							break;
+						case 12:
+							$arr[$i][$j]="December";
+							break;
+					}
+					echo "<td class='arch'><a class='title'>".$arr[$i][$j]."</a></td>";
+				}
+				else {
+					if ($ii<10)
+						$ii="0".$ii;
+
+					if ($arr[$i][$j]=="X")
+						echo "<td class='archx' style='cursor: pointer;' bgcolor='#f3f3f3' onclick="."location.href='archive_month.php?month=".$arr[0][$j]."-".$ii."'"."></td>";
+					else
+						echo "<td class='arch'></td>";
+				}
+			}
+		}
+		echo "</tr>";
 	}
 	
 	echo "</table>";
 	
+	echo "<br>";
+
+notable:
+
 	$db = NULL;
 
 	echo "<p><center><form method='post' action='search.php'><input type='text' name='tag' size='11'> <input type='submit' value='&#10148;'></form></center></p>";
