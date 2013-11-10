@@ -45,7 +45,6 @@
 
 		$month=substr($row['dt'], 5, 2);
 		$year=substr($row['dt'], 0, 4);
-		$is_ny=0;
 
 		if ($year != $new_year) {
 			$ncol++;
@@ -56,8 +55,14 @@
 			$is_ny=0;
 
 		if ($month != $new_month or $is_ny == 1) {
+			$pic_count=1;
 			$nrow=(13-$month);
-			$arr[$nrow][$ncol]="X";
+			$arr[$nrow][$ncol]=$pic_count;
+			$nrow_save=$nrow;
+		}
+		else {
+			$pic_count++;
+			$arr[$nrow_save][$ncol]=$pic_count;
 		}
 		$new_month=$month;
 		$new_year=$year;
@@ -121,8 +126,8 @@
 					if ($ii<10)
 						$ii="0".$ii;
 
-					if ($arr[$i][$j]=="X")
-						echo "<td class='archx' style='cursor: pointer;' bgcolor='#f3f3f3' onclick="."location.href='archive_month.php?month=".$arr[0][$j]."-".$ii."'"."></td>";
+					if ($arr[$i][$j]>0)
+						echo "<td class='archx' style='cursor: pointer;' bgcolor='#f3f3f3' onclick="."location.href='archive_month.php?month=".$arr[0][$j]."-".$ii."'".">".$arr[$i][$j]."</td>";
 					else
 						echo "<td class='arch'></td>";
 				}
