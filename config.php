@@ -10,4 +10,6 @@ $baseurl="http://dmpop.dyndns.org/pygmyfoto/"; // Remember the trailing slash
 
 $password="m0nk3y" // For use with the publish.php and unpublish.php scripts
 
+$archive_columns=10;
+
 ?> 

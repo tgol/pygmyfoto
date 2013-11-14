@@ -29,22 +29,25 @@
 	</script>
 	
 	<?php
-	
-	include 'config.php';
-	
+
+	$ncolmax=$archive_columns;
+
 	echo "<div id='content'><h1>$title</h1>";
 	
 	$db = new PDO('sqlite:pygmyfoto.sqlite');
 	
 	echo "<div class='center'>$navigation</div>";
-	$result = $db->query("SELECT id, title, description, tags, exif, dt, osm, original FROM photos WHERE published = '0' ORDER BY dt DESC");
-	$new_month="00";
-	$new_year="0000";
-	$ncol=0;
-	foreach($result as $row) {
 
-		$month=substr($row['dt'], 5, 2);
-		$year=substr($row['dt'], 0, 4);
+	/* get archived pictures info from db */
+	$result=$db->prepare("SELECT id, title, description, tags, exif, dt, osm, original FROM photos WHERE published = '0' ORDER BY dt DESC");
+	$result->execute();
+
+	/* build archive table */
+	$year_init='';
+	$ncol=0;
+	while ($val=$result->fetch(PDO::FETCH_OBJ)) {
+		$month=substr($val->dt, 5, 2);
+		$year=substr($val->dt, 0, 4);
 
 		if ($year != $new_year) {
 			$ncol++;
@@ -68,80 +71,66 @@
 		$new_year=$year;
 	}
 
-	if ($ncol < 1)
+	/* if no data get out */
+	if ($ncol==0)
 		goto notable;
 
+	/* build left column containing months */
+	$month_col[0]="December";
+	$month_col[1]="November";
+	$month_col[2]="October";
+	$month_col[3]="September";
+	$month_col[4]="August";
+	$month_col[5]="July";
+	$month_col[6]="June";
+	$month_col[7]="May";
+	$month_col[8]="April";
+	$month_col[9]="March";
+	$month_col[10]="February";
+	$month_col[11]="January";
+
+
+	/* number of tables */
+	$ntables=(int)($ncol/$ncolmax)+($ncol%$ncolmax>0?1:0);
+
 	echo "<br>";
-	echo "<table class='arch'>";
 
-	for ($i=0; $i<13; $i++) { /* year + 12 months */
-		echo "<tr>";
-		for ($j=0; $j<=$ncol; $j++) {
-			if ($i == 0)
-				echo "<th class='arch'><a class='title'>".$arr[0][$j]."</a></th>";
-			else {
-				$ii=(13-$i);
-				if ($j==0) {
-					switch ($ii) {
-						case 1:
-							$arr[$i][$j]="January";
-							break;
-						case 2:
-							$arr[$i][$j]="February";
-							break;
-						case 3:
-							$arr[$i][$j]="March";
-							break;
-						case 4:
-							$arr[$i][$j]="April";
-							break;
-						case 5:
-							$arr[$i][$j]="May";
-							break;
-						case 6:
-							$arr[$i][$j]="June";
-							break;
-						case 7:
-							$arr[$i][$j]="July";
-							break;
-						case 8:
-							$arr[$i][$j]="August";
-							break;
-						case 9:
-							$arr[$i][$j]="September";
-							break;
-						case 10:
-							$arr[$i][$j]="October";
-							break;
-						case 11:
-							$arr[$i][$j]="November";
-							break;
-						case 12:
-							$arr[$i][$j]="December";
-							break;
-					}
-					echo "<td class='arch'><a class='title'>".$arr[$i][$j]."</a></td>";
-				}
+	/* build html tables */
+	for ($k=0; $k<$ntables; $k++) {
+		echo "<table class='arch'>";
+		$jstart=($k*($ncolmax+1));
+		$jstop=min(((($k+1)*$ncolmax)+$k),($ncol+$ntables-1));
+		for ($i=0; $i<13; $i++) {
+			echo "<tr>";
+			for ($j=$jstart; $j<=$jstop; $j++) {
+
+				if ($i==0 && $j==$jstart)
+					echo "<td class='arch'>&nbsp;</td>";
+				else if ($i==0)
+					echo "<th class='arch'>".$arr[$i][$j-$k]."</th>";
+				else if ($j==$jstart)
+					echo "<td class='arch'>".$month_col[$i-1]."</td>";
 				else {
-					if ($ii<10)
-						$ii="0".$ii;
-
-					if ($arr[$i][$j]>0)
-						echo "<td class='archx' style='cursor: pointer;' bgcolor='#f3f3f3' onclick="."location.href='archive_month.php?month=".$arr[0][$j]."-".$ii."'".">".$arr[$i][$j]."</td>";
+					if ($arr[$i][$j-$k]>0) {
+						$ii=13-$i;
+						if ($ii<10)
+							$ii="0".$ii;
+						echo "<td class='archx' style='cursor: pointer;' bgcolor='#f3f3f3' onclick="."location.href='archive_month.php?month=".$arr[0][$j-$k]."-".$ii."'".">".$arr[$i][$j-$k]."</td>";
+					}
 					else
 						echo "<td class='arch'></td>";
 				}
+
 			}
+			echo "</tr>";
 		}
-		echo "</tr>";
+		echo "</table>";
+		echo "<br>";
 	}
-	
-	echo "</table>";
-	
-	echo "<br>";
 
 notable:
-
+	/* close db query */
+	$result->closeCursor();
 	$db = NULL;
 
 	echo "<p><center><form method='post' action='search.php'><input type='text' name='tag' size='11'> <input type='submit' value='&#10148;'></form></center></p>";
