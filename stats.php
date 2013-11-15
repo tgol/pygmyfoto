@@ -29,16 +29,18 @@
 	echo "<div class='center'>$navigation</div>";
 	
 	echo "<table border=0>";
-	
-	$result = $db->query("SELECT id, title, count FROM photos ORDER BY count DESC");
-	
+
+	$result = $db->prepare("SELECT id, title, count FROM photos ORDER BY count DESC");
+	$result->execute();
+
 	foreach($result as $row)
 	{
 	echo "<tr><td><p>".$row['title']."</p></td><td><p>".$row['count']."</p></td></tr>";
 	}
 	
 	echo "</table>";
-	
+
+	$result->closeCursor();
 	$db = NULL;
 	
 	echo "<div class='footer'>$footer</div>";

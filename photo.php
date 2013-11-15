@@ -41,9 +41,11 @@
 	echo "<div class='center'>$navigation</div>";
 	
 	echo "<table border=0>";
-	
-	$result = $db->query("SELECT id, title, description, tags, exif, osm, original, count FROM photos WHERE id='$id'");
-	
+
+	$result = $db->prepare("SELECT id, title, description, tags, exif, osm, original, count FROM photos WHERE id=:id");
+	$result->bindParam(':id', $id, PDO::PARAM_INT);
+	$result->execute();
+
 	foreach($result as $row)
 {
 	echo "<tr><td><h2>".$row['title']."</h2></td></tr>";
@@ -53,9 +55,11 @@
 	}
 	
 	echo "</table>";
-	
-	$db->query("UPDATE photos SET count = count + 1 WHERE id='$id'");
-	
+
+	$result = $db->prepare("UPDATE photos SET count = count + 1 WHERE id=:id");
+	$result->bindParam(':id', $id, PDO::PARAM_INT);
+	$result->execute();
+	$result->closeCursor();
 	$db = NULL;
 
 	echo "<p><center><form method='post' action='search.php'><input type='text' name='tag' size='11'> <input type='submit' value='&#10148;'></form></center></p>";

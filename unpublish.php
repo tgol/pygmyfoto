@@ -21,18 +21,19 @@
 	<?php
 	
 	session_start();
-	
-	if (isset($_GET['id'])) {
-    $_SESSION['rec'] = $_GET['id'];
-    }
-    
+
+    $id = $_GET['id'];
+
     if(isset($_POST['submit'])){
     $passwd = $_POST['passwd'];
     
     if($password == $passwd)
     {
     $db = new PDO('sqlite:pygmyfoto.sqlite');
-    $db->query("UPDATE photos SET published = '0' WHERE id='{$_SESSION['rec']}'");
+    $db->prepare("UPDATE photos SET published = '0' WHERE id=:id");
+    $result->bindParam(':id', $id, PDO::PARAM_INT);
+    $result->execute();
+    $result->closeCursor();
     $db = NULL;
     
     $host  = $_SERVER['HTTP_HOST'];

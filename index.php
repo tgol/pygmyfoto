@@ -41,8 +41,9 @@
 	echo "<div class='center'>$navigation</div>";
 	
 	echo "<table border=0>";
-	$result = $db->query("SELECT id, title, description, tags, exif, osm, original FROM photos WHERE published = '1' ORDER BY dt DESC");
-	
+	$result = $db->prepare("SELECT id, title, description, tags, exif, osm, original FROM photos WHERE published = '1' ORDER BY dt DESC");
+	$result->execute();
+
 	foreach($result as $row)
 	{
 	echo "<tr><td><h2><a class='title' href='photo.php?id=".$row['id']."'>".$row['title']."</h2></a></td></tr>";
@@ -52,7 +53,8 @@
 	}
 	
 	echo "</table>";
-	
+
+	$result->closeCursor();
 	$db = NULL;
 
 	echo "<p><center><form method='post' action='search.php'><input type='text' name='tag' size='11'> <input type='submit' value='&#10148;'></form></center></p>";
