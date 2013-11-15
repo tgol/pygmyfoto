@@ -36,7 +36,13 @@
 
 	$db = new PDO('sqlite:pygmyfoto.sqlite');
 
-	$result = $db->query("SELECT id, title, description, tags, exif, osm, original FROM photos WHERE published = '0' and dt like '$month%' ORDER BY dt DESC");
+	$result = $db->prepare("SELECT id, title, description, tags, exif, osm, original FROM photos
+	                      WHERE published = '0'
+	                      AND strftime('%Y-%m', dt) = :month
+	                      ORDER BY dt DESC");
+	$result->bindParam(':month', $month, PDO::PARAM_STR);
+	$result->execute();
+
 	if (empty($result))
 		goto notable;
 
