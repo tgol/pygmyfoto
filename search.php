@@ -30,9 +30,6 @@
 	</script>
 	
 	<?php
-	
-	include 'config.php';
-	
 	echo "<div id='content'><h1>$title</h1>";
 	
 	$tag = $_POST['tag'];
