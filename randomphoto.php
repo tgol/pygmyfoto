@@ -55,7 +55,7 @@
 
 	$result->closeCursor();
 
-	$db->prepare("UPDATE photos SET count = count + 1 WHERE id=:id");
+	$result=$db->prepare("UPDATE photos SET count = count + 1 WHERE id=:id");
 	$result->bindParam(':id', $id, PDO::PARAM_INT);
 	$result->execute();
 	$result->closeCursor();
