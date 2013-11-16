@@ -12,4 +12,6 @@ $password="m0nk3y" // For use with the publish.php and unpublish.php scripts
 
 $archive_columns=10;
 
-?> 
+$stats_rows=10;
+
+?>
