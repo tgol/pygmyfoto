@@ -37,12 +37,12 @@
 	$result->execute();
 	$rows=$result->fetchAll();
 	$row_count = count($rows);
-	$num_pages=ceil($row_count/$stats_rows);
+	$num_pages=$stats_rows > 0 ? ceil($row_count/$stats_rows) : 1;
 	if ($page<1 || $page>$num_pages)
 		$page=1;
 
-	$imin=$stats_rows*($page-1);
-	$imax=$imin+$stats_rows;
+	$imin=$stats_rows > 0 ? $stats_rows*($page-1) : 0;
+	$imax=$stats_rows > 0 ? $imin+$stats_rows : $row_count;
 
 	for ($i=$imin; $i<$imax; $i++) {
 		if (empty($rows[$i]))

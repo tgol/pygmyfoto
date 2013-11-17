@@ -30,7 +30,7 @@
 	
 	<?php
 
-	$ncolmax=$archive_columns;
+	$ncolmax=intval($archive_columns);
 
 	echo "<div id='content'><h1>$title</h1>";
 	
@@ -91,12 +91,34 @@
 
 
 	/* number of tables */
-	$ntables=(int)($ncol/$ncolmax)+($ncol%$ncolmax>0?1:0);
+	if ($ncolmax <= 0)
+		$ncolmax=$ncol;
+
+	$ntables=ceil($ncol/$ncolmax);
+
+	/* get page number */
+	$page=0;
+	$ppage = $_GET['page'];
+	if (isset($ppage))
+		$page=intval($ppage);
+
+	if ($page<1 || $page>$ntables)
+		$page=1;
 
 	echo "<br>";
 
+	/* one loop if pagination activated */
+	if ($paginated_archive) {
+		$kmin=$page-1;
+		$kmax=$page;
+	}
+	else {
+		$kmin=0;
+		$kmax=$ntables;
+	}
+
 	/* build html tables */
-	for ($k=0; $k<$ntables; $k++) {
+	for ($k=$kmin; $k<$kmax; $k++) {
 		echo "<table class='arch'>";
 		$jstart=($k*($ncolmax+1));
 		$jstop=min(((($k+1)*$ncolmax)+$k),($ncol+$ntables-1));
@@ -132,6 +154,18 @@ notable:
 	/* close db query */
 	$result->closeCursor();
 	$db = NULL;
+
+	/* pagination links */
+	if ($paginated_archive) {
+		if ($ntables>1) {
+			include 'paginate.php';
+			$pagination = pagination($page,$ntables,'/private/archive.php?page=%d');
+			echo "<div class='center'>";
+			foreach ($pagination as $link)
+				echo $link."&nbsp;";
+			echo "</div>";
+		}
+	}
 
 	echo "<p><center><form method='post' action='search.php'><input type='text' name='tag' size='11'> <input type='submit' value='&#10148;'></form></center></p>";
 
