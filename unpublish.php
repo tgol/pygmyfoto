@@ -22,44 +22,40 @@
 	
 	session_start();
 
-    $id = $_GET['id'];
+	if (isset($_GET['id'])) {
+		$_SESSION['rec'] = $_GET['id'];
+	}
 
-    if(isset($_POST['submit'])){
-    $passwd = $_POST['passwd'];
-    
-    if($password == $passwd)
-    {
-    $db = new PDO('sqlite:pygmyfoto.sqlite');
-    $db->prepare("UPDATE photos SET published = '0' WHERE id=:id");
-    $result->bindParam(':id', $id, PDO::PARAM_INT);
-    $result->execute();
-    $result->closeCursor();
-    $db = NULL;
-    
-    $host  = $_SERVER['HTTP_HOST'];
-    $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-    $extra = 'archive.php';
-    header("Location: http://$host$uri/$extra");
-    
-    session_destroy();
-    exit;
-    }
-    
-    else
-    
-    {
-    $error_message = "<p><div class='center'><font color='red'>Wrong password.</font> Try again or <a href='index.php'>cancel</a></div></p>";
-    }
-    }
-    
-    ?>
-    
-    <?php if($error_message){ echo $error_message; } ?>
-    <p><div class='center'>
-    <form method="post" action="unpublish.php">
-    Password: <input type="text" name="passwd" />
-    <input type="submit" name="submit" value="Submit"/>
-    </form></p>
-    </div>
-    </div>
+	if(isset($_POST['submit'])){
+
+		$passwd = $_POST['passwd'];
+
+		if($password == $passwd)
+		{
+			$db = new PDO('sqlite:pygmyfoto.sqlite');
+			$db->query("UPDATE photos SET published = '0' WHERE id='{$_SESSION['rec']}'");
+			$db = NULL;
+
+			$host  = $_SERVER['HTTP_HOST'];
+			$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+			$extra = 'archive.php';
+			header("Location: http://$host$uri/$extra");
+
+			session_destroy();
+			exit;
+		}
+		else {
+			$error_message = "<p><div class='center'><font color='red'>Wrong password.</font> Try again or <a href='index.php'>cancel</a></div></p>";
+		}
+	}
+	?>
+
+	<?php if($error_message){ echo $error_message; } ?>
+	<p><div class='center'>
+	<form method="post" action="unpublish.php">
+	Password: <input type="text" name="passwd" />
+	<input type="submit" name="submit" value="Submit"/>
+	</form></p>
+	</div>
+	</div>
 </body>
