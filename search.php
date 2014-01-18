@@ -42,8 +42,8 @@
 	
 	echo "<table border=0>";
 
-	$term = "%$tag%";
 	$result = $db->prepare("SELECT id, title, description, tags, exif, osm, original FROM photos WHERE tags LIKE :term ORDER BY dt DESC");
+	$term = "%".$tag."%";
 	$result->bindParam(':term', $term, PDO::PARAM_STR);
 	$result->execute();
 

@@ -33,7 +33,11 @@
 		if($password == $passwd)
 		{
 			$db = new PDO('sqlite:pygmyfoto.sqlite');
-			$db->query("UPDATE photos SET published = '1' WHERE id='{$_SESSION['rec']}'");
+			$result=$db->prepare("UPDATE photos SET published = '1' WHERE id=:id");
+			$id = "{$_SESSION['rec']}";
+			$result->bindParam(':id', $id, PDO::PARAM_INT);
+			$result->execute();
+			$result->closeCursor();
 			$db = NULL;
 
 			$host  = $_SERVER['HTTP_HOST'];
