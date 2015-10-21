@@ -25,7 +25,7 @@ function pagination($current, $pages, $link='?page=%d') {
 			$output[] = '<a href="'.sprintf($link,$i).'">'.$i.'</a>';
 		endif;
 	endfor;
-	if ($current+1 < $pages):
+	if ($current < $pages):
 		$output[] = '<a href="'.sprintf($link,$current+1).'">></a>';
 	else:
 		$output[] = '<a>></a>';
